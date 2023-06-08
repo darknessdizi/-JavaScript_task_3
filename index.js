@@ -26,9 +26,9 @@ class Good {
         // available: true | false.
 
         if (available == true) {
-            this._available = 'В наличии';
+            this.available = true;
         } else  if (available == false) {
-            this._available = 'Нет в наличии';
+            this.available = false;
         }
     }
 }
@@ -79,15 +79,16 @@ class Basket {
     }
 
     remove(good, amount) {
+
         // Уменьшает количество товара в корзине, если количество 
         // становится равным нулю, товар удаляется.
 
         for (let i=0; i<this.goods.length; i++) {
-            console.log('Цикл=', i, this.goods)
             if (this.goods[i].id == good.id) {
                 this.goods[i].amount -= amount;
                 if (this.goods[i].amount <= 0) {
                     this.goods.splice(i, 1);
+                    this.goods[i].amount = 0;
                 }
                 return;
             } 
@@ -95,19 +96,36 @@ class Basket {
     }
 
     clear() {
+
         // Очищает содержимое корзины.
+
+        this.goods.forEach(object => object.amount = 0);
+        this.goods.splice(0, this.goods.length);
     }
 
     removeUnavailable() {
+
         // Удаляет из корзины товары, имеющие признак available === false.
+
+        let newArray = this.goods.filter(object => object.available ? true : object.amount = 0);
+        this.goods = newArray;
     }
 
     get totalAmount() {
+
         // возвращает общую стоимость товаров в корзине
+
+        let total = this.goods.reduce((sum, object) => sum + (object.price * object.amount), 0);
+        return total
     }
 
     get totalSum() {
+
         // возвращает общее количество товаров в корзине
+
+        let total = 0;
+        this.goods.forEach(object => total += object.amount);
+        return total
     }
 }
 
@@ -162,6 +180,7 @@ class GoodsList {
     add (value) {
 
         // Добавление товара в каталог.
+        // value: объект класса Good.
 
         this.#goods.push(value);
     }
@@ -198,28 +217,37 @@ goodList.add(product_3);
 goodList.add(product_4);
 goodList.add(product_5);
 // console.log(goodList.list)
-// goodList.remove(5)
+goodList.remove(5)
 // console.log(goodList.list)
-// goodList.remove(2)
-console.log(goodList.list);
+goodList.remove(2)
+// console.log(goodList.list);
 
 goodList.sortPrice = true;
 console.log(goodList.list);
 
-goodList.sortPrice = false;
+goodList.sortDir = false;
 console.log(goodList.list);
 
-const basket_good_1 = new BasketGood(product_5);
+const basket_good_1 = new BasketGood(product_1);
 const basket_good_2 = new BasketGood(product_2);
-const basket_good_3 = new BasketGood(product_5);
+const basket_good_3 = new BasketGood(product_3);
+const basket_good_4 = new BasketGood(product_4);
+const basket_good_5 = new BasketGood(product_5);
 // console.log(basket_good_1, basket_good_2);
 
 const basket = new Basket();
 basket.add(basket_good_1, 8);
 basket.add(basket_good_3, 12);
 basket.add(basket_good_2, 17);
+basket.add(basket_good_2, 43);
+basket.add(basket_good_4, 110);
+basket.add(basket_good_5, 34);
 // console.log(basket);
 
 basket.remove(basket_good_2, 6)
 basket.remove(basket_good_2, 11)
 console.log(basket);
+
+basket.removeUnavailable();
+console.log(basket);
+
