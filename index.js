@@ -87,8 +87,8 @@ class Basket {
             if (this.goods[i].id == good.id) {
                 this.goods[i].amount -= amount;
                 if (this.goods[i].amount <= 0) {
-                    this.goods.splice(i, 1);
                     this.goods[i].amount = 0;
+                    this.goods.splice(i, 1);
                 }
                 return;
             } 
@@ -159,22 +159,19 @@ class GoodsList {
     get list () {
 
         // Возвращает массив доступных для продажи товаров в соответствии 
-        // с установленным фильтром и сортировкой по полю Price.
+        // с установленным фильтром полня name и сортировкой по полю Price.
 
-        // Реализовать фильтр !!!!!!!!!!!!****************!!!!!!!!!!!!!!
+        let tempArray = this.#goods.filter(object => this.filter.test(object.name));
         if (this.sortPrice) {
-            const tempArray = this.#goods.slice();
             if (this.sortDir) {
-                console.log('По возрастанию');
+                // console.log('По возрастанию');
                 tempArray.sort((p1, p2) => (p1.price >= p2.price) ? 1 : -1);
             } else {
-                console.log('По убыванию');
+                // console.log('По убыванию');
                 tempArray.sort((p1, p2) => (p1.price <= p2.price) ? 1 : -1);
             }
-            return tempArray;
-        } else {
-            return this.#goods;
-        }
+        } 
+        return tempArray;
     }
 
     add (value) {
@@ -203,51 +200,64 @@ const product_2 = new Good(2, 'Штаны', 'Gussi', [54-4, 54-5, 56-3, 56-5], 2
 const product_3 = new Good(3, 'Футболка', 'Light pink', [52-4, 53-4, 56-5], 1900, true);
 const product_4 = new Good(4, 'Шорты', 'blue', [50-3], 2000, true);
 const product_5 = new Good(5, 'Куртка', 'Модная', [54-5], 3500, true);
-// console.log(product_1, product_2, product_3, product_4, product_5)
+const product_6 = new Good(6, 'Штаны короткие', 'Самые короткие в мире', [54-4, 54-5, 56-3, 56-5], 1000, true);
+const product_7 = new Good(7, 'шТАны узкие', 'Для самых узких', [54-4, 54-5, 56-3], 1100, true);
+const product_8 = new Good(8, 'Cool штаны-рыбацкие', 'Go на рыбалку', [54-4, 56-5], 1300, true);
 
 product_5.setAvailable(false);
 product_4.setAvailable(false);
-// console.log(product_1)
+product_7.setAvailable(false);
 
-const goodList = new GoodsList('/<regexp>/<flags>', false, true);
-// console.log(goodList)
+const goodList = new GoodsList(/штан/i, true, false);
+
 goodList.add(product_1);
 goodList.add(product_2);
 goodList.add(product_3);
 goodList.add(product_4);
 goodList.add(product_5);
-// console.log(goodList.list)
-goodList.remove(5)
-// console.log(goodList.list)
-goodList.remove(2)
-// console.log(goodList.list);
+goodList.add(product_6);
+goodList.add(product_7);
+goodList.add(product_8);
+console.log('Наполнили каталог GoodsList:', goodList.list)
 
-goodList.sortPrice = true;
-console.log(goodList.list);
+goodList.remove(8)
+console.log('Удалили элемент из GoodsList:', goodList.list)
 
-goodList.sortDir = false;
-console.log(goodList.list);
+goodList.sortDir = true;
+console.log('Поменяли сортировку GoodsList (стало по возрастанию):', goodList.list);
+
+goodList.sortPrice = false;
+console.log('Отменили сортировку по цене GoodsList:', goodList.list);
 
 const basket_good_1 = new BasketGood(product_1);
 const basket_good_2 = new BasketGood(product_2);
 const basket_good_3 = new BasketGood(product_3);
 const basket_good_4 = new BasketGood(product_4);
 const basket_good_5 = new BasketGood(product_5);
-// console.log(basket_good_1, basket_good_2);
+const basket_good_6 = new BasketGood(product_6);
+const basket_good_7 = new BasketGood(product_7);
+const basket_good_8 = new BasketGood(product_8);
 
 const basket = new Basket();
+
 basket.add(basket_good_1, 8);
 basket.add(basket_good_3, 12);
 basket.add(basket_good_2, 17);
 basket.add(basket_good_2, 43);
 basket.add(basket_good_4, 110);
 basket.add(basket_good_5, 34);
-// console.log(basket);
+console.log('Наполнили корзину basket:', basket.goods);
 
-basket.remove(basket_good_2, 6)
-basket.remove(basket_good_2, 11)
-console.log(basket);
+basket.remove(basket_good_2, 6);
+basket.remove(basket_good_2, 11);
+basket.remove(basket_good_5, 100);
+console.log('Удалили элементы в корзине basket:', basket.goods);
 
 basket.removeUnavailable();
-console.log(basket);
+console.log('Убрали элементы содержащие false в поле available:', basket.goods);
 
+console.log('Общая стоимость товаров в корзине:', basket.totalAmount);
+console.log('Общее количество товаров в корзине:', basket.totalSum);
+
+basket.clear();
+console.log('Корзина basket после очистки', basket.goods);
